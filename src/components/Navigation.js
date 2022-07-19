@@ -47,7 +47,7 @@ export default function Navigation() {
         </a>
       </div>
       <div className="flex">
-        <div className="bg-black-alt h-14 flex items-center px-4 border-[#505050] border opacity-70 border-r-0 border-b-0 border-t-0">
+        <div className="bg-black-alt h-14 flex items-center px-4 border-[#505050] border opacity-70 border-r-0 border-b border-t-0">
           <img src={WalletNotConnected} className="h-4 -mt-1 mr-2" />
           <span className="font-simplon-bp text-white">NOT CONNECTED</span>
         </div>
