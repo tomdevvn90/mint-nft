@@ -4,10 +4,7 @@ module.exports = {
       plugins: [
         require('tailwindcss'),
         require('autoprefixer'),
-      ],
-      define: {
-        "process.env": {}
-      },
+      ]
     },
   },
 }

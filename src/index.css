@@ -126,6 +126,11 @@ html {
   font-weight: 400;
   color: #fff !important;
 }
+.custom-footer-mobile {
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
 .wrapper-connect-wallet:hover #wallet-address {
   color:#fff;
 }
