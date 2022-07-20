@@ -6,9 +6,11 @@ import Menu from "../assets/menu.svg";
 import Arrow from "../assets/arrow.svg";
 import Close from "../assets/close.svg";
 import WalletNotConnected from "../assets/wallet-not-connected.svg";
+import WalletConnected from "../assets/walletconnect.svg"
 import  Socials  from "./Socials";
 
-export default function Navigation() {
+export default function Navigation(props) {
+  
   const [showMenu,setShowmenu] = useState(false);
   const setMenu = () =>{
     setShowmenu(!showMenu)
@@ -48,8 +50,8 @@ export default function Navigation() {
       </div>
       <div className="flex">
         <div className="bg-black-alt h-14 flex items-center px-4 border-[#505050] border opacity-70 border-r-0 border-b border-t-0">
-          <img src={WalletNotConnected} className="h-4 -mt-1 mr-2" />
-          <span className="font-simplon-bp text-white">NOT CONNECTED</span>
+          <img src={props.disconnect?WalletNotConnected:WalletConnected} className="h-4 -mt-1 mr-2" />
+          <span className="font-simplon-bp text-white" id="qwe">NOT CONNECTED</span>
         </div>
         <button
           onClick={setMenu}
