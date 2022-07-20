@@ -1,4 +1,3 @@
-import Wallet from './Wallet';
 import Navigation from './Navigation';
 import React, { useState } from "react";
 import WalletConnect from "../assets/walletconnect.svg";
@@ -9,7 +8,6 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import ProgressBar from "@ramonak/react-progress-bar";
-import Countdown from 'react-countdown';
 
 
 const abi = require("./abi.json");
@@ -48,37 +46,41 @@ const web3Modal = new Web3Modal({
   providerOptions // required
 });
 
-async function changeAccount(setWhiteLoad,web3,setLoad,setCountdown){
+async function changeAccount(setWhiteLoad,web3,setLoad,setMintCount){
 	var accounts = await web3.eth.getAccounts();
 	console.log(accounts)
 	account = accounts[0];
-  setCountdown(false);
   timeStamp = await saleConfig.methods.getPublicSaleStartTime().call();
   var whitelistStarted = await saleConfig.methods.getWhitelistPrice().call();
 	var currentTime = Math.floor(Date.now() / 1000);
-	if(whitelistStarted != 0 ){
-		if(timeStamp > currentTime ){	//Whitelist Mintint
-		  console.log("Mint Whitelist");
-		  if(checkIfWhitelisted()){
-			  setWhiteLoad(true);
-        document.getElementById('statusMint').innerText = "0.07 ETH/NFT";
-		  }
-		  else{
-			  document.getElementById('statusMint').innerHTML = "You are not on whitelist, wait for public mint to start in";
-        setCountdown(true);
-			  setWhiteLoad(false);
-		  }
-		}
-		else{	//Public minting
-		  console.log("Mint public");
-      document.getElementById('statusMint').innerText = "0.09 ETH/NFT";
-		  setLoad(true);
-		}
-	}
+  minted = await contract.methods.totalSupply().call();
+  if(minted < 4446){
+    if(whitelistStarted != 0 ){
+      getMintedCount(setMintCount);
+      if(timeStamp > currentTime ){	//Whitelist Mintint
+        console.log("Mint Whitelist");
+        if(checkIfWhitelisted()){
+          setWhiteLoad(true);
+          document.getElementById('statusMint').innerText = "0.07 ETH/NFT";
+        }
+        else{
+          document.getElementById('statusMint').innerHTML = "You are not on whitelist, wait for public mint to start on July 21nd at 14:00 UTC";
+          setWhiteLoad(false);
+        }
+      }
+      else{	//Public minting
+        console.log("Mint public");
+        document.getElementById('statusMint').innerText = "0.09 ETH/NFT";
+        setLoad(true);
+      }
+    }
     document.getElementById('qwe').innerText = account;
+  }else{
+    document.getElementById('statusMint').innerText = "All NFTs minted, please buy on OpenSea";
+  }
 }
 
-async function connectwallet(setLoad,setWhiteLoad,setDisconnect,setCountdown) {
+async function connectwallet(setLoad,setWhiteLoad,setDisconnect,setMintCount) {
     provider = await web3Modal.connect();
     if(provider != null){
 
@@ -100,6 +102,7 @@ async function connectwallet(setLoad,setWhiteLoad,setDisconnect,setCountdown) {
 		  var currentTime = Math.floor(Date.now() / 1000);
       if(minted < 4446){
         if(whitelistStarted != 0 ){
+          getMintedCount(setMintCount);
           if(timeStamp > currentTime ){	//Whitelist Mintint
           console.log("Mint Whitelist");
           if(checkIfWhitelisted()){
@@ -107,8 +110,7 @@ async function connectwallet(setLoad,setWhiteLoad,setDisconnect,setCountdown) {
             document.getElementById('statusMint').innerText = "0.07 ETH/NFT";
           }
           else{
-            document.getElementById('statusMint').innerHTML = "You are not on whitelist, wait for public mint to start in ";
-            setCountdown(true);
+            document.getElementById('statusMint').innerHTML = "You are not on whitelist, wait for public mint to start on July 21nd at 14:00 UTC ";
           }
           }
           else{	//Public minting
@@ -119,16 +121,16 @@ async function connectwallet(setLoad,setWhiteLoad,setDisconnect,setCountdown) {
         }
         else{	//Nothing started yet
           console.log("Whitelist Mint not started");
-          document.getElementById('statusMint').innerText = "Whitelist Minting Hasn't started";
+          document.getElementById('statusMint').innerText = "Whitelist minting hasn't started";
         }
       }
       else{
-        document.getElementById('statusMint').innerText = "All NFTs Minted, Please Buy on OpenSea";
+        document.getElementById('statusMint').innerText = "All NFTs minted, please buy on OpenSea";
       }
 
   // Subscribe to accounts change
   provider.on("accountsChanged", (accounts: string[]) => {
-	changeAccount(setWhiteLoad,web3,setLoad,setCountdown);
+	changeAccount(setWhiteLoad,web3,setLoad);
   });
 
   // Subscribe to chainId change
@@ -208,7 +210,16 @@ async function disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoa
 
 
 }
-
+async function getMintedCount(setMintCount) {
+  var whitelist = await contract.methods.getWhiteistMintCount(account).call();
+  var publicc = await contract.methods.numberMinted(account).call();
+  console.log(whitelist,publicc);
+  var nftCount = {
+    "whitelist": whitelist,
+    "public": publicc
+  }
+  setMintCount(nftCount);
+}
 
 export default function Mint() {
   const [isConnected, setIsConnected] = useState(false);
@@ -216,7 +227,7 @@ export default function Mint() {
   const [load,setLoad] = useState(false);
 	const [whiteLoad,setWhiteLoad] = useState(false);
 	const [disconnect,setDisconnect] = useState(true);
-  const [countdown,setCountdown] = useState(false);
+  const [mintCount,setMintCount] = useState({"whitelist": 0, "public":0});
   return (
     <>
     <Navigation disconnect={disconnect} />
@@ -225,7 +236,7 @@ export default function Mint() {
       <div className="mt-10 pt-[8rem] pr-[12px] pl-[12px] xl:pt-[12.5rem] md:pr-[0px] md:pl-[0px] mx-auto max-w-screen-sm pb-[90px] pb-[5rem] xl:pb-[19rem]">
 
         {disconnect?
-        <div className="mt-8 border-[#505050] border text-white flex" onClick={() => connectwallet(setLoad,setWhiteLoad,setDisconnect,setCountdown)}>
+        <div className="mt-8 border-[#505050] border text-white flex" onClick={() => connectwallet(setLoad,setWhiteLoad,setDisconnect,setMintCount)}>
           <div className="w-[100%] text-center group cursor-pointer">
             <div className="border-[#505050] border-b md:py-14 py-6">
               <img
@@ -248,6 +259,16 @@ export default function Mint() {
           <div className="mb-8 tracking-wider text-white font-simplon-bp font-bold md:text-[32px] mt-4 md:mt-14 text-[20px] leading-[100%]">
             WHITELIST MINT
           </div>
+          <div className='text-white'>
+            {mintCount.whitelist?
+            <div>
+              <div>{mintCount.whitelist}</div>
+              <div>{mintCount.public}</div>
+            </div>
+            
+            :null}
+           <button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}>disconnect</button> 
+          </div>
           <div className="text-white font-simplon-bp flex items-center text-32px font-light space-x-6">
             <div className="w-1/2 flex text-center h-input items-center h-12 md:h-input border-[#505050] border">
 
@@ -269,6 +290,16 @@ export default function Mint() {
         <div className="mb-8 tracking-wider text-white font-simplon-bp font-bold md:text-[32px] mt-4 md:mt-14 text-[20px] leading-[100%]">
             SELECT QUANTITY
         </div>
+        <div className='text-white'>
+            {mintCount.whitelisMint?
+            <div>
+              <div>{mintCount.whitelist}</div>
+              <div>{mintCount.public}</div>
+            </div>
+            
+            :null}
+            <button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}>disconnect</button> 
+          </div>
         <div className="text-white font-simplon-bp flex items-center text-32px font-light space-x-6">
           <div className="w-1/2 flex text-center h-input items-center h-12 md:h-input border-[#505050] border">
 
@@ -292,9 +323,8 @@ export default function Mint() {
       <ProgressBar completed={minted} maxCompleted={4446} baseBgColor="black" animateOnRender={true} bgColor="white" labelColor="black" labelAlignment="center"/>:null}
         <div className="w-[100%] text-center group">
           <div className="mb-8 tracking-wider text-white font-simplon-bp font-bold md:text-[32px] mt-4 md:mt-14 text-[20px] leading-[100%]" id="statusMint">
-            Connect Wallet to Start Minting
+            Connect wallet to start minting
           </div>
-          {countdown?<Countdown date={ Date.now() + (timeStamp*1000 - Date.now()) } className="text-white"/>:null}
           </div>
       </div>
     </div>
