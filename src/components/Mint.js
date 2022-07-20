@@ -262,8 +262,7 @@ export default function Mint() {
           <div className='text-white'>
             {mintCount.whitelist?
             <div>
-              <div>Whitelist NFTs minted: {mintCount.whitelist}</div>
-              <div>Public NFTs minted:{mintCount.public}</div>
+              <div>NFTs minted: {+mintCount.whitelist+ +mintCount.public}</div>
             </div>
             
             :null}
@@ -293,8 +292,7 @@ export default function Mint() {
         <div className='text-white'>
             {mintCount.whitelisMint?
             <div>
-              <div>Whitelist NFTs minted: {mintCount.whitelist}</div>
-              <div>Public NFTs minted:{mintCount.public}</div>
+              <div>NFTs minted: {+mintCount.whitelist + +mintCount.public}</div>
             </div>
             
             :null}
