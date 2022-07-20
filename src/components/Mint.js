@@ -16,8 +16,8 @@ const saleConfigAbi = require('./saleConfigAbi.json');
 const ABI = abi;
 const saleConfigABI = saleConfigAbi;
 
-const ADDRESS = "0x5552e5a89a70cb2ef5adbbc45a6be442fe7160ec";       //Need to update for mainnet - production
-const saleConfigADDRESS = "0xafc52644017dd1Df4DD531178Ec86E78dd8019a2"; // Sale Config address
+const ADDRESS = "0x0f88CAE6254F05f098Ea6474D883F4038c9367B8";       //Need to update for mainnet - production
+const saleConfigADDRESS = "0xc7B036E09e447211A863d41472c273dE4e323953"; // Sale Config address
 var account = null;
 var contract = null;
 var provider = null;
@@ -28,21 +28,21 @@ const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider, // required
     options: {
-      infuraId: "23cceccdbd454ab38acdb049b3ccee59" // Works for all network
+      infuraId: "f1417f48499b4931ac64beaf73579afc" // Works for all network
     }
   },
   coinbasewallet: { // Need to update for mainnet - production
       package: CoinbaseWalletSDK, //
       options: {
-        appName: "Rinkeby Endpoint", // Required
-        infuraId: "23cceccdbd454ab38acdb049b3ccee59", // Required
-        chainId: 4 // Optional. It defaults to 1 if not provided
+        appName: "nftMint", // Required
+        infuraId: "f1417f48499b4931ac64beaf73579afc", // Required
+        chainId: 1 // Optional. It defaults to 1 if not provided
       }
     }
 };
 const web3Modal = new Web3Modal({
-  network: "rinkeby", // Need to be updated for mainnet - production
-  cacheProvider: true, // optional
+  network: "mainnet", // Need to be updated for mainnet - production
+  cacheProvider: false, // optional
   providerOptions // required
 });
 
