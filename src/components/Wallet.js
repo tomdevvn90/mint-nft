@@ -987,11 +987,11 @@ export default function Wallet() {
     <div className="wallet-custom uppercase">
 		{disconnect?
     	<div>
-			<button onClick={() => connectwallet(setLoad,setWhiteLoad,setDisconnect)} className="uppercase relative transition duration-500 group-hover:text-black  tracking-wider  py-6 font-simplon-bp font-bold md:text-[20px] border-[#505050]">Connect Wallet</button>
+			<button onClick={() => connectwallet(setLoad,setWhiteLoad,setDisconnect)} className="w-[100%] uppercase relative transition duration-500 group-hover:text-black  tracking-wider  py-6 font-simplon-bp font-bold md:text-[20px] border-[#505050]">Connect Wallet</button>
 			<h6 id="wallet-address" >Wallet not connected</h6>
 		</div>:
 		<div>
-			<button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}  className="uppercase relative transition duration-500 group-hover:text-black py-6 tracking-wider  font-simplon-bp font-bold md:text-[20px] border-[#505050]">Disconnect</button>
+			<button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}  className="w-[100%] uppercase relative transition duration-500 group-hover:text-black py-6 tracking-wider  font-simplon-bp font-bold md:text-[20px] border-[#505050]">Disconnect</button>
 			<h6 id="wallet-address-connect">{account}</h6>
 			<h5 id="statusMint"></h5>
 		</div>}
