@@ -224,8 +224,6 @@ async function disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoa
 	if(whiteLoad){
 		setWhiteLoad(false);
   }
-
-
 }
 async function getMintedCount(setMintCount) {
   var whitelist = await contract.methods.getWhiteistMintCount(account).call();
@@ -247,7 +245,9 @@ export default function Mint() {
   const [mintCount,setMintCount] = useState({"whitelist": 0, "public":0});
   return (
     <>
-    <Navigation disconnect={disconnect} />
+    <Navigation disconnect={disconnect} onDisconnect={ () => {
+      disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)
+    } } />
 
     <div className=" text-center md:text-left mb-[-33px] m-auto min-body-custom">
       <div className="mt-10 pt-[8rem] pr-[12px] pl-[12px] xl:pt-[12.5rem] md:pr-[0px] md:pl-[0px] mx-auto max-w-screen-sm pb-[90px] pb-[5rem] xl:pb-[19rem]">

@@ -69,7 +69,12 @@ export default function Navigation(props) {
             {"text-[14px] uppercase": !props.disconnect }
           )}  id="qwe">NOT CONNECTED</span>
           {!props.disconnect && (
-            <button className="rounded-[4px] ml-[22px] font-simplon-bp text-white uppercase text-xs leading-[100%] px-[16px] py-[10px] border-[#505050] border">Disconnect</button>
+            <button
+              onClick={ e => {
+                e.preventDefault()
+                props.onDisconnect()
+              } }
+              className="rounded-[4px] ml-[22px] font-simplon-bp text-white uppercase text-xs leading-[100%] px-[16px] py-[10px] border-[#505050] border">Disconnect</button>
           )}
         </div>
         <button
