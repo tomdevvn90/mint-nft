@@ -15,9 +15,12 @@ const saleConfigAbi = require('./saleConfigAbi.json');
 
 const ABI = abi;
 const saleConfigABI = saleConfigAbi;
-
-const ADDRESS = "0x0f88CAE6254F05f098Ea6474D883F4038c9367B8";       //Need to update for mainnet - production
-const saleConfigADDRESS = "0xc7B036E09e447211A863d41472c273dE4e323953"; // Sale Config address
+var web3;
+//for mainnet, switch the ADDRESS and saleConfigADDRESS with commented address
+//line 40, chainId:1
+//line 47,netowrk:mainnet
+const ADDRESS = "0x5552E5a89A70cB2eF5AdBbC45a6BE442fE7160Ec" ;//"0x0f88CAE6254F05f098Ea6474D883F4038c9367B8";       
+const saleConfigADDRESS = "0xafc52644017dd1Df4DD531178Ec86E78dd8019a2" //"0xc7B036E09e447211A863d41472c273dE4e323953";
 var account = null;
 var contract = null;
 var provider = null;
@@ -28,20 +31,20 @@ const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider, // required
     options: {
-      infuraId: "f1417f48499b4931ac64beaf73579afc" // Works for all network
+      infuraId: "23cceccdbd454ab38acdb049b3ccee59" // Works for all network
     }
   },
   coinbasewallet: { // Need to update for mainnet - production
       package: CoinbaseWalletSDK, //
       options: {
-        appName: "nftMint", // Required
-        infuraId: "f1417f48499b4931ac64beaf73579afc", // Required
-        chainId: 1 // Optional. It defaults to 1 if not provided
+        appName: "Rinkeby Endpoint", // Required
+        infuraId: "23cceccdbd454ab38acdb049b3ccee59", // Required
+        chainId: 4 // Optional. It defaults to 1 if not provided
       }
     }
 };
 const web3Modal = new Web3Modal({
-  network: "mainnet", // Need to be updated for mainnet - production
+  network: "rinkeby", // Need to be updated for mainnet - production
   cacheProvider: false, // optional
   providerOptions // required
 });
@@ -84,7 +87,7 @@ async function connectwallet(setLoad,setWhiteLoad,setDisconnect,setMintCount) {
     provider = await web3Modal.connect();
     if(provider != null){
 
-		  var web3 = new Web3(provider);
+		   web3 = new Web3(provider);
 		//   await window.ethereum.send('eth_requestAccounts');
 		  var accounts = await web3.eth.getAccounts();
 		  account = accounts[0];
@@ -130,7 +133,7 @@ async function connectwallet(setLoad,setWhiteLoad,setDisconnect,setMintCount) {
 
   // Subscribe to accounts change
   provider.on("accountsChanged", (accounts: string[]) => {
-	changeAccount(setWhiteLoad,web3,setLoad);
+	changeAccount(setWhiteLoad,web3,setLoad,setMintCount);
   });
 
   // Subscribe to chainId change
@@ -180,13 +183,20 @@ async function whitelisMint() {
 	const claimingAddress = keccak256(account);
 
 	const hexProof = tree.getHexProof(claimingAddress);
-	// console.log(hexProof)
-	// console.log(root.toString('hex'))
-	// console.log(tree.verify(hexProof, claimingAddress, root))
+	console.log(hexProof)
+	console.log(root.toString('hex'))
+	console.log(tree.verify(hexProof, claimingAddress, root))
 	if(tree.verify(hexProof,claimingAddress,root)){
 		var _mintAmount = Number(document.querySelector("[id=amount]").value);
+    console.log(_mintAmount);
+      if (_mintAmount ==0 || _mintAmount == "" || _mintAmount > 2){
+        _mintAmount = 2;
+      }
+      console.log(_mintAmount);
 		var mintRate = await saleConfig.methods.getWhitelistPrice().call();
+    console.log("mint rate is "+mintRate);
 		var totalAmount = mintRate * _mintAmount;
+    console.log("total amount is "+ totalAmount);
 		contract.methods.whitelistMint(hexProof,_mintAmount).send({ from: account, value: String(totalAmount) });
 	}
 	else{
@@ -266,18 +276,20 @@ export default function Mint() {
             </div>
             
             :null}
-           <button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}>disconnect</button> 
+           <button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}
+              className="group h-14 tracking-[-0.015em] w-32 flex justify-center items-center text-white font-simplon-bp font-medium text-[14px] leading-[28px] md:text-[18px] md:leading-[100%] md:w-64 hover:bg-primary-red bg-outrageous-orange w-full"
+           >Disconnect</button> 
           </div>
           <div className="text-white font-simplon-bp flex items-center text-32px font-light space-x-6">
-            <div className="w-1/2 flex text-center h-input items-center h-12 md:h-input border-[#505050] border">
+            
 
               <div className="border-r border-l border-[#505050] h-12 md:h-input w-8/12 flex items-center justify-center">
-                <input id="amount" min="1" max="2"
+                <input id="amount" min="1" max="2" type="number" placeholder="Enter number of NFTs to Mint"
                   className="bg-transparent outline-none h-12 md:h-input text-base md:text-[20px] w-10/12 text-center"
-                />
+                  />
               </div>
 
-            </div>
+            
           </div>
           <div className="mt-5 text-gray text-base md:text-xl">Max 2</div>
           <div className="mt-4 md:mt-14">
@@ -289,6 +301,17 @@ export default function Mint() {
         <div className="mb-8 tracking-wider text-white font-simplon-bp font-bold md:text-[32px] mt-4 md:mt-14 text-[20px] leading-[100%]">
             SELECT QUANTITY
         </div>
+          <div className='text-white'>
+            {mintCount.whitelist?
+            <div>
+              <div>NFTs minted: {+mintCount.whitelist+ +mintCount.public}</div>
+            </div>
+            
+            :null}
+           <button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}
+              className="group h-14 tracking-[-0.015em] w-32 flex justify-center items-center text-white font-simplon-bp font-medium text-[14px] leading-[28px] md:text-[18px] md:leading-[100%] md:w-64 hover:bg-primary-red bg-outrageous-orange w-full"
+           >Disconnect</button> 
+          </div>
         <div className='text-white'>
             {mintCount.whitelisMint?
             <div>
@@ -296,7 +319,6 @@ export default function Mint() {
             </div>
             
             :null}
-            <button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}>disconnect</button> 
           </div>
         <div className="text-white font-simplon-bp flex items-center text-32px font-light space-x-6">
           <div className="w-1/2 flex text-center h-input items-center h-12 md:h-input border-[#505050] border">
@@ -316,9 +338,14 @@ export default function Mint() {
 
       </div>:null
       }
-
+      <br />
       {minted?
-      <ProgressBar completed={minted} maxCompleted={4446} baseBgColor="black" animateOnRender={true} bgColor="white" labelColor="black" labelAlignment="center"/>:null}
+      <div className="text-white">
+      Total minted:{minted}/4446  
+      
+      {/* <ProgressBar completed={minted} maxCompleted={4446} baseBgColor="black" animateOnRender={true} bgColor="black" labelColor="#4ca7b3" labelAlignment="center"/> */}
+      </div>
+      :null}
         <div className="w-[100%] text-center group">
           <div className="mb-8 tracking-wider text-white font-simplon-bp font-bold md:text-[32px] mt-4 md:mt-14 text-[20px] leading-[100%]" id="statusMint">
             Connect wallet to start minting

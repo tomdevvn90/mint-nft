@@ -13,7 +13,7 @@ export default function Footer() {
           <img src={KawaText} alt="Kawakami NFT" className="h-4" />
         </div>
         <div className="font-simplon-bp" style={{ color: "#505050" }}>
-          Kawakami© 2022
+          Kawakami© 2022 (v1.5)
         </div>
       </div>
       <div className="mt-6 pb-8 md:pb-0 md:mt-0 flex justify-center">
