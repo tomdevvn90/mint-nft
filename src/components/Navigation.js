@@ -12,13 +12,14 @@ import GreenDot from "../assets/green-circle.svg"
 import  Socials  from "./Socials";
 
 export default function Navigation(props) {
-
+  console.log('ok',props)
   const [showMenu,setShowmenu] = useState(false);
+
   const setMenu = () =>{
     setShowmenu(!showMenu)
   }
   return (
-    <nav className="w-[100%] md:top-[40px] top-[0] md:bg-[#ffffff00] bg-[#000] z-[100] left-0 right-0 h-14 flex justify-between items-center w-screen border-b border-[#505050]">
+    <nav  className="w-[100%] md:top-[40px] top-[0] md:bg-[#ffffff00] bg-[#000] z-[100] left-0 right-0 h-14 flex justify-between items-center w-screen border-b border-[#505050]">
       <div
         className="flex items-center border-[#505050] md:border-r h-14 px-2 md:px-6 cursor-pointer"
       >
@@ -56,8 +57,20 @@ export default function Navigation(props) {
             {
               "opacity-70": props.disconnect
             })}>
-          <img src={props.disconnect?WalletNotConnected:GreenDot} className="h-4 -mt-1 mr-2" />
-          <span className="font-simplon-bp text-white" id="qwe">NOT CONNECTED</span>
+          <img src={props.disconnect?WalletNotConnected:GreenDot} className={sx(
+            "mr-2",
+            {
+              "w-[8px] h-[8px] mt-[-1px]":!props.disconnect,
+              "h-4 -mt-1 "  : props.disconnect
+            }
+          )}  />
+          <span className={sx(
+            "font-simplon-bp text-white",
+            {"text-[14px] uppercase": !props.disconnect }
+          )}  id="qwe">NOT CONNECTED</span>
+          {!props.disconnect && (
+            <button className="rounded-[4px] ml-[22px] font-simplon-bp text-white uppercase text-xs leading-[100%] px-[16px] py-[10px] border-[#505050] border">Disconnect</button>
+          )}
         </div>
         <button
           onClick={setMenu}

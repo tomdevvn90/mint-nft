@@ -19,7 +19,7 @@ var web3;
 //for mainnet, switch the ADDRESS and saleConfigADDRESS with commented address
 //line 40, chainId:1
 //line 47,netowrk:mainnet
-const ADDRESS = "0x5552E5a89A70cB2eF5AdBbC45a6BE442fE7160Ec" ;//"0x0f88CAE6254F05f098Ea6474D883F4038c9367B8";       
+const ADDRESS = "0x5552E5a89A70cB2eF5AdBbC45a6BE442fE7160Ec" ;//"0x0f88CAE6254F05f098Ea6474D883F4038c9367B8";
 const saleConfigADDRESS = "0xafc52644017dd1Df4DD531178Ec86E78dd8019a2" //"0xc7B036E09e447211A863d41472c273dE4e323953";
 var account = null;
 var contract = null;
@@ -92,7 +92,13 @@ async function connectwallet(setLoad,setWhiteLoad,setDisconnect,setMintCount) {
 		  var accounts = await web3.eth.getAccounts();
 		  account = accounts[0];
 		  var chainId = await web3.eth.getChainId();
-		  document.getElementById('qwe').textContent = account;
+      if(account.length > 10) {
+        let namefirst = account.substring(0,4);
+        let namelast = account.substring((account.length - 4),account.length )
+        let namefull = namefirst+' ... ' +namelast;
+        document.getElementById('qwe').textContent = namefull;
+      }
+
 		  contract = new web3.eth.Contract(ABI, ADDRESS);
 		  saleConfig = new web3.eth.Contract(saleConfigABI,saleConfigADDRESS);
 
@@ -216,7 +222,8 @@ async function disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoa
 	if(load){
 		setLoad(false);	}
 	if(whiteLoad){
-		setWhiteLoad(false); }
+		setWhiteLoad(false);
+  }
 
 
 }
@@ -274,14 +281,14 @@ export default function Mint() {
             <div>
               <div>NFTs minted: {+mintCount.whitelist+ +mintCount.public}</div>
             </div>
-            
+
             :null}
            <button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}
               className="group h-14 tracking-[-0.015em] w-32 flex justify-center items-center text-white font-simplon-bp font-medium text-[14px] leading-[28px] md:text-[18px] md:leading-[100%] md:w-64 hover:bg-primary-red bg-outrageous-orange w-full"
-           >Disconnect</button> 
+           >Disconnect</button>
           </div>
           <div className="text-white font-simplon-bp flex items-center text-32px font-light space-x-6">
-            
+
 
               <div className="border-r border-l border-[#505050] h-12 md:h-input w-8/12 flex items-center justify-center">
                 <input id="amount" min="1" max="2" type="number" placeholder="Enter number of NFTs to Mint"
@@ -289,7 +296,7 @@ export default function Mint() {
                   />
               </div>
 
-            
+
           </div>
           <div className="mt-5 text-gray text-base md:text-xl">Max 2</div>
           <div className="mt-4 md:mt-14">
@@ -306,18 +313,18 @@ export default function Mint() {
             <div>
               <div>NFTs minted: {+mintCount.whitelist+ +mintCount.public}</div>
             </div>
-            
+
             :null}
            <button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}
               className="group h-14 tracking-[-0.015em] w-32 flex justify-center items-center text-white font-simplon-bp font-medium text-[14px] leading-[28px] md:text-[18px] md:leading-[100%] md:w-64 hover:bg-primary-red bg-outrageous-orange w-full"
-           >Disconnect</button> 
+           >Disconnect</button>
           </div>
         <div className='text-white'>
             {mintCount.whitelisMint?
             <div>
               <div>NFTs minted: {+mintCount.whitelist + +mintCount.public}</div>
             </div>
-            
+
             :null}
           </div>
         <div className="text-white font-simplon-bp flex items-center text-32px font-light space-x-6">
@@ -341,8 +348,8 @@ export default function Mint() {
       <br />
       {minted?
       <div className="text-white">
-      Total minted:{minted}/4446  
-      
+      Total minted:{minted}/4446
+
       {/* <ProgressBar completed={minted} maxCompleted={4446} baseBgColor="black" animateOnRender={true} bgColor="black" labelColor="#4ca7b3" labelAlignment="center"/> */}
       </div>
       :null}
