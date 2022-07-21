@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { useState } from "react";
+import sx from "classnames";
 import KawaText from "../assets/kawa-text.png";
 import KawaLogo from "../assets/kawa-logo.png";
 import Menu from "../assets/menu.svg";
@@ -50,7 +51,11 @@ export default function Navigation(props) {
         </a>
       </div>
       <div className="flex">
-        <div className="bg-black-alt h-14 flex items-center px-4 border-[#505050] border opacity-70 border-r-0 border-b border-t-0">
+        <div className={sx(
+            "bg-black-alt h-14 flex items-center px-4 border-[#505050] border  border-r-0 border-b border-t-0",
+            {
+              "opacity-70": props.disconnect
+            })}>
           <img src={props.disconnect?WalletNotConnected:GreenDot} className="h-4 -mt-1 mr-2" />
           <span className="font-simplon-bp text-white" id="qwe">NOT CONNECTED</span>
         </div>
