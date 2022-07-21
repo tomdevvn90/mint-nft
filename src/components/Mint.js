@@ -20,8 +20,8 @@ var web3;
 //for mainnet, switch the ADDRESS and saleConfigADDRESS with commented address
 //line 40, chainId:1
 //line 47,netowrk:mainnet
-const ADDRESS = "0x5552E5a89A70cB2eF5AdBbC45a6BE442fE7160Ec" ;//"0x0f88CAE6254F05f098Ea6474D883F4038c9367B8";
-const saleConfigADDRESS = "0xafc52644017dd1Df4DD531178Ec86E78dd8019a2" //"0xc7B036E09e447211A863d41472c273dE4e323953";
+const ADDRESS = "0x0f88CAE6254F05f098Ea6474D883F4038c9367B8";//"0x5552E5a89A70cB2eF5AdBbC45a6BE442fE7160Ec" ;
+const saleConfigADDRESS = "0xc7B036E09e447211A863d41472c273dE4e323953";//"0xafc52644017dd1Df4DD531178Ec86E78dd8019a2";
 var account = null;
 var contract = null;
 var provider = null;
@@ -41,12 +41,12 @@ const providerOptions = {
       options: {
         appName: "Rinkeby Endpoint", // Required
         infuraId: "23cceccdbd454ab38acdb049b3ccee59", // Required
-        chainId: 4 // Optional. It defaults to 1 if not provided
+        chainId: 1 // Optional. It defaults to 1 if not provided
       }
     }
 };
 const web3Modal = new Web3Modal({
-  network: "rinkeby", // Need to be updated for mainnet - production
+  network: "mainnet", // Need to be updated for mainnet - production
   cacheProvider: false, // optional
   providerOptions // required
 });
