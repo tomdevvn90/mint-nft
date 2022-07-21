@@ -66,7 +66,9 @@ export default function Navigation(props) {
           )}  />
           <span className={sx(
             "font-simplon-bp text-white",
-            {"text-[14px] uppercase": !props.disconnect }
+            {
+              "text-[14px] uppercase hidden sm:inline-block": !props.disconnect,
+            }
           )}  id="qwe">NOT CONNECTED</span>
           {!props.disconnect && (
             <button

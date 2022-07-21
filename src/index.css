@@ -46,6 +46,14 @@ html {
   src: url("./assets/fonts/SimplonBPMono-Medium.otf");
 }
 
+.custom-btn-amount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), linear-gradient(180deg, #4D4D4D 60%, #252525 100.16%);
+}
+
 .main__bg {
   background-image: url("./assets/kawa-bg.png");
   background-origin: content-box;
@@ -368,4 +376,3 @@ html {
     background: none !important;
   }
 }
-

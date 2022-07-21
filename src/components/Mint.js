@@ -8,6 +8,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import ProgressBar from "@ramonak/react-progress-bar";
+import GreenDot from "../assets/green-circle.svg"
 
 
 const abi = require("./abi.json");
@@ -27,6 +28,7 @@ var provider = null;
 var saleConfig = null;
 var minted = null;
 var timeStamp = null;
+var namefull  = null;
 const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider, // required
@@ -51,8 +53,15 @@ const web3Modal = new Web3Modal({
 
 async function changeAccount(setWhiteLoad,web3,setLoad,setMintCount){
 	var accounts = await web3.eth.getAccounts();
-	console.log(accounts)
 	account = accounts[0];
+  if(account.length > 10) {
+    let namefirst = account.substring(0,4);
+    let namelast = account.substring((account.length - 4),account.length )
+    namefull = namefirst+' ... ' +namelast;
+
+  }else{
+    namefull = account;
+  }
   timeStamp = await saleConfig.methods.getPublicSaleStartTime().call();
   var whitelistStarted = await saleConfig.methods.getWhitelistPrice().call();
 	var currentTime = Math.floor(Date.now() / 1000);
@@ -78,6 +87,7 @@ async function changeAccount(setWhiteLoad,web3,setLoad,setMintCount){
       }
     }
     document.getElementById('qwe').innerText = account;
+
   }else{
     document.getElementById('statusMint').innerText = "All NFTs minted, please buy on OpenSea";
   }
@@ -92,11 +102,15 @@ async function connectwallet(setLoad,setWhiteLoad,setDisconnect,setMintCount) {
 		  var accounts = await web3.eth.getAccounts();
 		  account = accounts[0];
 		  var chainId = await web3.eth.getChainId();
+
       if(account.length > 10) {
         let namefirst = account.substring(0,4);
         let namelast = account.substring((account.length - 4),account.length )
-        let namefull = namefirst+' ... ' +namelast;
+        namefull = namefirst+' ... ' +namelast;
         document.getElementById('qwe').textContent = namefull;
+
+      }else{
+        document.getElementById('qwe').textContent = account;
       }
 
 		  contract = new web3.eth.Contract(ABI, ADDRESS);
@@ -240,6 +254,7 @@ export default function Mint() {
   const [isConnected, setIsConnected] = useState(false);
   const [quantity] = useState(0);
   const [load,setLoad] = useState(false);
+  const [amount,setAmount] = useState(0);
 	const [whiteLoad,setWhiteLoad] = useState(false);
 	const [disconnect,setDisconnect] = useState(true);
   const [mintCount,setMintCount] = useState({"whitelist": 0, "public":0});
@@ -288,15 +303,11 @@ export default function Mint() {
            >Disconnect</button>
           </div>
           <div className="text-white font-simplon-bp flex items-center text-32px font-light space-x-6">
-
-
               <div className="border-r border-l border-[#505050] h-12 md:h-input w-8/12 flex items-center justify-center">
                 <input id="amount" min="1" max="2" type="number" placeholder="Enter number of NFTs to Mint"
                   className="bg-transparent outline-none h-12 md:h-input text-base md:text-[20px] w-10/12 text-center"
                   />
               </div>
-
-
           </div>
           <div className="mt-5 text-gray text-base md:text-xl">Max 2</div>
           <div className="mt-4 md:mt-14">
@@ -305,19 +316,32 @@ export default function Mint() {
         </div>:
         load?
         <div>
+        <div className="tracking-wider text-white font-simplon-bp font-bold text-lg text-[20px] leading-[100%] md:text-[32px] border-[#505050] border-b pb-2 md:pb-4 border-dashed">
+          1. CONNECT YOUR WALLET
+        </div>
+        <div className="border-[#505050] border mt-[32px]">
+          <div className="flex items-center justify-center py-[40px] md:py-[64px]">
+            <div className="inline-flex items-center px-[16px] py-[12px]  border-[#303030] border rounded-[200px]">
+              <span className="inline-block font-simplon-bp text-white text-[14px] uppercase px-[16px] py-[13px] rounded-[20px] bg-[#313131] leading-[100%]">{namefull}</span>
+              <span  className="ml-[16px] inline-block flex items-center font-simplon-bp text-white text-[16px] font-[400]"><img src={GreenDot} className="w-[8px] h-[8px] mt-[-1px] mr-[5px]" />Connected</span>
+            </div>
+          </div>
+          <div className="text-right border-[#505050] border-t-[1px] p-[12px]">
+            <button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}
+               className="rounded-[4px] font-simplon-bp text-white uppercase text-xs leading-[100%] px-[16px] py-[10px] border-[#303030] border"
+            >Disconnect</button>
+          </div>
+
+        </div>
         <div className="mb-8 tracking-wider text-white font-simplon-bp font-bold md:text-[32px] mt-4 md:mt-14 text-[20px] leading-[100%]">
-            SELECT QUANTITY
+            2. SELECT QUANTITY
         </div>
           <div className='text-white'>
             {mintCount.whitelist?
-            <div>
+            <div className="mb-[20px]">
               <div>NFTs minted: {+mintCount.whitelist+ +mintCount.public}</div>
             </div>
-
             :null}
-           <button onClick={() => disconnectWallet(setLoad,setWhiteLoad,setDisconnect,load,whiteLoad)}
-              className="group h-14 tracking-[-0.015em] w-32 flex justify-center items-center text-white font-simplon-bp font-medium text-[14px] leading-[28px] md:text-[18px] md:leading-[100%] md:w-64 hover:bg-primary-red bg-outrageous-orange w-full"
-           >Disconnect</button>
           </div>
         <div className='text-white'>
             {mintCount.whitelisMint?
@@ -328,17 +352,34 @@ export default function Mint() {
             :null}
           </div>
         <div className="text-white font-simplon-bp flex items-center text-32px font-light space-x-6">
-          <div className="w-1/2 flex text-center h-input items-center h-12 md:h-input border-[#505050] border">
-
-            <div className="border-r border-l border-[#505050] h-12 md:h-input w-8/12 flex items-center justify-center">
-              <input id="amount" min="1" max="5"
-                className="bg-transparent outline-none h-12 md:h-input text-base md:text-[20px] w-10/12 text-center"
-              />
+          <div className="w-[100%] sm:w-1/2 flex text-center h-input items-center h-12 md:h-input border-[#505050] border">
+            <div className="w-[100%] flex text-center h-input items-center h-12 md:h-input border-[#505050] border">
+              <div
+                className="w-3/12 cursor-pointer custom-btn-amount"
+                onClick={ e => {
+                e.preventDefault();
+                if(amount>=1){
+                  setAmount(amount-1)
+                }
+              }}
+              >-</div>
+              <div className="border-r border-l border-[#505050] h-[100%] md:h-input w-8/12 flex items-center justify-center">
+                <input id="amount" min="1" max="5"
+                  className="bg-transparent outline-none h-[100%] md:h-input text-base md:text-[20px] w-10/12 text-center"
+                  value={amount}
+                />
+              </div>
+              <div className="w-3/12 cursor-pointer custom-btn-amount"
+                onClick={ e => {
+                e.preventDefault();
+                if(amount<=4){
+                  setAmount(amount+1)
+                }
+              } }>+</div>
             </div>
-
           </div>
         </div>
-        <div className="mt-5 text-gray text-base md:text-xl">Max "5"</div>
+        <div className="mt-5 text-gray text-base md:text-xl">Max 5</div>
         <div className="mt-4 md:mt-14">
         <Button text="MINT" isFull isFit onClick={() => mint()} size="lg"/>
         </div>
